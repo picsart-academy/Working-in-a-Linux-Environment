@@ -58,4 +58,50 @@ cd -, changes the working directory to the previous working directory.
 cd, changes the working directory to your home directory.
 cd ~user_name, changes the working directory to the home directory of user_name.
 
+## Exploring the System
+We can specify multiple directories with the ls command: ls /dir1 /dir2
+ls -l, the long format.
+
+Commands are often followed by one or more options that modify their behavior and by one or more arguments, the items upon which the commands act. 
+command -options arguments
+
+### ls options
+-a --all List all files
+-A --almost-all List all files, except . and ..
+-d --directory List the directory itself, not its contents.
+-F --classify Append an indicator character to the end of each listed name.
+-h --human-readable Display file sizes in human-readable format rather than in bytes.
+-l Display in long format.
+-r --reverse Display the results in reverse order.
+-S sort the results by file size.
+-t Sort by modification time.
+
+- file, display file type
+
+- less, see the contents of a text file
+
+- /, the root
+- /bin, binaries (programs)
+- /boot, contains the linux kernel, initial RAM disk image, and the boot loader. 
+- /dev, contains device nodes. Here is where the kernel maintains a list of all the devices it understands.
+- /etc, contains all the system-wide configuration files. It also contains a collection fo shell scripts that start each of the system services at boot time. /etc/crontab defines when automated jobs will run; /etc/fstab is a table of storage devices and their associated mount points; /etc/passwd, a list of the user accounts.
+- /home, the home directory.
+- /lib, contains shared library files.
+- /lost+found, it is used in the case of a partial recovery from a file system corruption event. 
+- /media, contains the mount points for removable media such as USB drives, CR-ROMs, and so on.
+- /mnt, On older Linux systems, the directory contains mount points for removable devices that have been mounted manually.
+- /opt, used to install optional software. Used to hold commercial software products that might be installed on the system.
+- /proc, a virtual file system maintained by the kernel. The "files" it contains are peepholes into the kernel itself.
+- /root, home dir for root.
+- /sbin, contains system binaries. 
+- /tmp, storage of temporary, transient files created by various programs.
+- /usr, contains all the programs and support files used by regular users.
+- /usr/bin, contains the executable programs installed by your Linux distribution. 
+- /usr/lib, the shared libraries for the programs in /usr/bin.
+- /usr/local, programs that are not included with your distribution but are intended for system-wide use are installed. Programs compiled from source code are normally installed in /usr/local/bin. 
+- /usr/sbin, more system administration programs.
+- /usr/share, shared ddata used by programs in /usr/bin (default config files, icons, screen backgrounds, sound files, and so on).
+- /usr/share/doc, documentation files organized by package.
+- /var, data that is likely to change is stored here. Various databases, spool files, user mail, and so on.
+- /var/log, log files, records of various system activity. 
 
