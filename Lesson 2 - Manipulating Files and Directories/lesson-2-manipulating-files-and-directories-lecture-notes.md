@@ -141,7 +141,7 @@ Man page organization
 man 5 passwd
 ```
 
-- **appropos**, display appropriate commands.
+- **apropos**, display appropriate commands.
 - **whatis**, display one-line manual page descriptions.
 - **info**, display a program's info entry.
 - **alias**, create aliases for commands.
