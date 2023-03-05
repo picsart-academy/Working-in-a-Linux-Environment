@@ -68,4 +68,26 @@ ls /bin /usr/bin | sort | less
 
 `uniq` accepts a sorted list of data from either standard input or a single filename argument and, by default, removes any duplicates from the list. 
 
-To see the 
+To see the the list of duplicates, use `-d` option.
+
+```
+ls /bin /usr/bin | sort | uniq | less
+ls /bin /usr/bin | sort | uniq -d | less
+```
+
+### wc - print line, word, and byte counts
+
+The `wc` (word count) command is used to display the number of lines, words, and bytes contained in files.
+
+```
+wc output.tx
+```
+
+The `-l` option limits the output to report only lines.
+
+To see the number of items we have in the sorted list:
+
+```
+ls /bin /usr/bin | sort | uniq | wc -l
+```
+
