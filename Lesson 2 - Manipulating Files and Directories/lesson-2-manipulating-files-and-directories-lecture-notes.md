@@ -1,3 +1,5 @@
+(The following information is from William Shott's book, The Linux Command Line) - https://www.amazon.com/Linux-Command-Line-2nd-Introduction/dp/1593279523/
+
 # Lesson 2 - Manipulating Files and Directories
 
 ## Wildcards
