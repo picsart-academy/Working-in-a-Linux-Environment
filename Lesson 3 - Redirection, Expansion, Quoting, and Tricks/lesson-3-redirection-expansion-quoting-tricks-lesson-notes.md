@@ -244,3 +244,60 @@ Note. Within single quotes, the backslash loses its special meaning and is treat
 In addition to its role as the escape character, the backslash is used as part of a notation to represent certain special characters called control codes. The first 32 characters in the ASCII coding scheme are used to transmit commands to Teletype-like devices. The idea behind this representation using the backslash originated in the C programming language and has been adopted by many others, including the shell.
 
  Adding `-e` option to echo will enable interpretation of escape sequences. 
+
+
+## Keyboard Tricks
+
+- `Ctrl-A`, move cursor to the beginning of line.
+- `Ctrl-E`, move cursor to the end of the line.
+- `Ctrl-F`, same as the right arrow key.
+- `Ctrl-B`, same es the left arrow key.
+- `Alt-F`, move cursor forward one word.
+- `Alt-B`, move cursor backward one word.
+- `Ctrl-L`, same as the clear command (although might behave slightly differently for some shells).
+
+### modifying text
+
+- `Ctrl-D`, delete the character at the cursor location.
+- `Ctrl-T`, transpose (exchange) the character at the cursor location with the one preceding it.
+- `Alt-T`, transpose the word at the cursor location with the one preceding it.
+- `Alt-L`, convert the characters from the cursor location to the end of the word to lowercase.
+- `Alt-U`, convert the characters from the cursor location to the end of the word to uppercase.
+
+### cut and paste (kill and yank)
+
+Items that are cut are stored in a buffer (a temporary storage area in memory) called the kill-ring.
+
+- `Ctrl-K`, kill text from the cursor location to the end of line.
+- `Ctrl-U`, kill text from the cursor location to the beginning of the line.
+- `Alt-D`, kill text from the cursor location to the end of the current word.
+- `Alt-Backspace`, kill text from the cursor location to the beginning of the current word. If the cursor is at the beginning of a word, kill the previous word.
+- `Ctrl-Y`, yank text from the kill-ring and insert it at the cursor location.
+
+### completion
+
+Completion occurs when you press the `TAB` key while typing a command.
+
+Completion will also work on variables (if the beginning of the word is a $), usernames (if the word begins with ~), commands (if the word is the first word on the line), and hostnames (if the beginning of the word is @). Hostname completion works only for hostnames listed in `/etc/hosts`.
+
+- `Alt-?`, display a list of possible completions. On most systems pressing the TAB a second time will do the same.
+- `Alt-*`, insert all possible completions.
+
+### history
+
+To view the contents, type `history'.
+
+To use the line in the history, use the exclamation point: `!88` to run the 88th command.
+
+To start incremental search, press `Ctrl-R`.
+
+- `Alt-<`, move to the beginning (top) of the history list.
+- `Alt->`, move the the end.
+- `Ctrl-O`, execute the current item in the history list and advance to the next one.
+
+### history expansion
+
+- `!!`, repeat the last command
+- `!number`, repeat history list item number.
+- `!string`, repeat last history list item starting with string.
+- `!?string`, repeat last history list item containing string.
