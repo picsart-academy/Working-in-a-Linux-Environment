@@ -2,7 +2,7 @@
 
 # Lesson 4 - Permissions and Scripts
 
-## Owners, groups members, and everybody else
+## Owners, group members, and everybody else
 
 In the UNIX security model, a user may **own** files and directories. When a user owns a file or directory, the user has control over its access. Users can belong to a **group** consisting of one or more users who are given access to files and directories by their owners. An owner may also grant some set of access rights to everybody. To find out information about yout identity, use the `id` command.
 
