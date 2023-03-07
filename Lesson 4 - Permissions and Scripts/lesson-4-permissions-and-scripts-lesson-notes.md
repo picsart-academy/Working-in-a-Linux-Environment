@@ -1,4 +1,4 @@
-(The following information is from William Shott's book, The Linux Command Line) - https://www.amazon.com/Linux-Command-Line-2nd-Introduction/dp/1593279523/
+(The following information is partially from William Shott's book, The Linux Command Line) - https://www.amazon.com/Linux-Command-Line-2nd-Introduction/dp/1593279523/ and UNIX and Linux System Administration Handbook by Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, Dan Mackin - https://www.amazon.com/UNIX-Linux-System-Administration-Handbook/dp/0134277554/
 
 # Lesson 4 - Permissions and Scripts
 
@@ -74,8 +74,180 @@ u+x,go=rw add execute to the user, and read/write to group and other.
 ### umask - set default permissions
 
 Controls the default permission given to a file when it is created. 
+umask will remove the permissions for created files, for example, 
+```
+0002 is 
+000 000 000 010 
+
+which applied to the symbolic names would mean removing the write permission for others.
+the default is
+default: 000 110 110 110
+umask:   000 000 000 010 (w is set to remove for others)
+result:  000 110 110 100 (w removed for others)
+```
+
+umask 0000 won't have any effect.
+
+### special permissions
 
 - setuid bit (4000), (chmod u+s program) when applied to an executable file, it changes the effective user ID from that of the real user to that of the program's owner. When an ordinary user runs a program that is setuid root, the program runs with the effective privileges of the superuser. This allows the program to access files and directories that an ordinary user would normally be prohibited from accessing. 
 - setgid bit (2000), (chmod g+s dir) changes the effective group ID from the real group ID of the real user to that of the file owner. If the setgid bit is set on a directory, newly created files in the directory will be given the group ownership of the directory rather the group ownership of the file's creator. 
 - sticky bit (1000), (chmod +t dir) a holdover from ancient Unix, where it was possible to mark an executable file as "not swappable." On files, Linux ignores the sticky bit, but if applied to a directory, it prevents users from deleting or renaming files unless the user is either the owner of the directory, the owner of the file, or the superuser. Often used to control access to a shared directory, such as /tmp.
 
+Special permissions might look like the following
+
+```
+-rwsr-xr-x (setuid program)
+drwxrwsr-x (setgid directory)
+drwxrwxrwt (sticky bit directory)
+```
+
+## Managing Users
+
+### /etc/passwd
+
+It's a list of users recognized by the system. Historically, each user's encrypted password was also stored in the /etc/passwd file, now moved to a separated file, /etc/shadow. Now you can see the `x` in place of the password.
+
+### login names
+
+Login names (usernames) must be unique and Linux currenlty limits logins to 32 characters. Ubuntu allows logins starting with or entirely consisting of numbers and other special characters. Login names are case sensitive, while the lowercase names are traditional. 
+
+
+Passwords were encrypted with DES, then MD5-based, and finally moved to salted SHA-512-based password hashes. 
+Encrypted passwords are of constant length (86 characters for SHA-512, 34 characters for MD5, and 13 characters for DES).
+
+MD5-encrypted password fields in the shadow password file always start with `$1$` or `$md5$`. Blowfish passwords start with `$2$`, SHA-256 passwords start with `$5$` and SHA-512 passwords with `$6$`.
+
+### UID and GID
+
+By definition, root has UID 0. Most systems also define pseudo-users such as bin and daemon to be the owners of commands or configuration files. Such users also have fake shells, /bin/false or /usr/sbin/nologin.
+
+GID 0 is reserved for the group called root, system, or wheel. The system uses several predefined groups for its own housekeeping. In ancient times, when computing power was expensive, groups were used for accounting puproses so that the right department could be charged for your seconds of CPU time, minutes of login time, and kilobytes of disk used. Today, groups are used primarily to share access to files.
+
+The `/etc/group` file defines the groups. To facilitate collaboration, you can set the setgid bit (2000) on a directory or mount filesystems with the grpid option. 
+
+### home directory
+
+Home directories are where login shells look for account-specific customizations such as shell aliases and environment variables, as well as SSH keys, server fingerprints, and other program state.
+
+### login shell
+
+The login shell is normally a command interpreter, but can be any program. bash is the default for Linux. A sysadmin can always change a user's shell by editing the passwrd file with vipw. 
+
+### /etc/shadow
+
+Shadow password file is readable only by the superuser and serves to keep ecnrypted passwords safe. Each line of /etc/shadow contains:
+- Login name, the same as in /etc/passwd. 
+- Encrypted password.
+- Date of last password change, filled in by the `passwd` command.
+- Min. number of days between password changes.
+- Max. number of days between password changes.
+- Number of days in advanced to warn users about password expiration.
+- Days after password expiration that account is disabled.
+- Account expiration date. Never expires if left blank.
+- A field reserved for future use which is currently always empty.
+
+### /etc/group
+
+Lines described
+- Group name
+- Ecnrypted password or a placeholder
+- GID number
+- List of members, separated by commas
+
+It's possible to set a group password that allows arbitrary users to enter the group with the newgrp command. The feature rarely used. The group password can be set with gpasswd, which under Linux stores the encrypted password in the /etc/gshadow file.
+
+If a user defaults to a particular group in /etc/passwd but does not appear to be in that group according to /etc/group, /etc/passwd wins the argument. The group memberships granted at login time are the union of those found in the passwd and group files.
+
+Group membership can also serve as a marker for other contexts or privileges. You can configure sudo so that everyone in the "admin" group automatically has sudo privileges. 
+
+Linux supplies the **groupadd**, **groupmod**, and **groupdel** commands to create, modify, and delete groups.
+
+### manually creating a user
+1. Edit the `passwd` and `shadow` files to define the user's account.
+2. Add the user to the `/etc/group` file (not really necessary).
+3. Set an initial password
+4. Create, chown, and chmod the user's home directory.
+5. Configure roles and permissions.
+
+```sudo passwd username``` sets the password for the username.
+
+Startup files traditionally begin with a dot and end with the letters **rc**, short for "run command," a relic of the CTSS operating system.
+
+`Sample startup files are traditionally kept in /etc/skel`. If you customize your systems' startup file examples, `/usr/local/etc/skel` is a reasonable place to put the modified copies. 
+
+Setting home directory permissions and ownerships
+```
+sudo chown -R newuser:newgroup ~newuser
+```
+
+Scripts to help ease the process of user creation
+- useradd
+- adduser
+
+deluser deletes the user, although the files/folders won't be deleted unless specified in /etc/deluser.conf
+
+`usermod -L user` locks the user, and `usermod -U user` unlocks the user.
+
+## Changing identities
+
+- The `su` command allows you to assume the identity of another user and either start a new shell session with that user's ID or issue a single command as that user.
+- The `sudo` command allows an administrator to set up a configuration file called `/etc/sudoers` and define specific commands that particular users are permitted to execute under an assumed identity.
+
+### su - substitute user
+
+Used to start a shell as another user. 
+
+```
+su [-[l]] [user]
+```
+
+If the `-l` option is included, the resulting shell session is a login shell for the specified user, aka, the user's environment is loaded and the working directory is changed to the user's home directory. If the user is not specified, the superuser is assumed. 
+
+```
+su knuth
+su - knuth
+su knuth -c 'ls -l'
+```
+
+### sudo - execute a command as another user
+
+The admin can configure sudo to allow an ordinary user to execute commands as a different user (usually the superuser) in a controlled way. 
+**Note.** The use of `sudo` does not require access to the superuser's password. Authenticating using sudo requires the user's own password. 
+
+```
+sudo command_name
+```
+
+Sudo doesn't start a new shell nor does it load another user's environment. `sudo -i` will start an interactive superuser session. To see the granted privileges, use `sudo -l`.
+
+By default, Ubuntu disables logins to the root account (by failing to set a password for the account) and instead uses sudo to grant superuser privileges. The initial user account is granted full access to superuser privileges via sudo and may grant similar powers to subsequent user accounts.
+
+### chown - change file owner and group
+
+```
+chown [owner][:[group]] file...
+```
+
+```
+chown bob file - changes the ownership of the file from its current owner to user bob.
+chown bob:users file - changes the ownership to bob and the group to users.
+chown :admins file - changes the group owner to the group admins.
+chown bob: file - changes the file owner to user bob and changes the group owner to the login group of user bob.
+```
+
+An old chgrp may be used for group ownership change, as well.
+
+Adding new groups
+```
+groupadd new_group
+```
+
+Adding user to a new group (appending)
+```
+usermod -a -G new_group username
+```
+
+See user's groups ```groups username```
+
+Changing password is done by the `passwd` command.
