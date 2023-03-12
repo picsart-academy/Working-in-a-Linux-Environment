@@ -30,7 +30,7 @@ ls -l /bin/usr 2> error.txt
 
 To capture all
 ```
-ls -. /bin/usr > output.txt 2>&1
+ls -l /bin/usr > output.txt 2>&1
 ```
 
 The second approach
