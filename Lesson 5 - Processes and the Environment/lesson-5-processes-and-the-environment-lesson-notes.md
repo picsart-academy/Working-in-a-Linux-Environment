@@ -140,3 +140,64 @@ vmstat - Outputs a snapshot of system resource usage including memory, swap, and
 xload - A graphical program that draws a graph showing system load over time.
 tload - Draws the graph in terminal.
 ```
+
+## The Environment
+
+The shell maintains a body of information during our shell session called the environment. Programs use data stored in the environment to determine facts about the system's configuration. While most programs use configuration files to store program settings, some programs also look for values stored in the environment to adjust their behavior. 
+
+To see what is stored in the environment, we can use either the `set` builtin in bash or the `printenv` program.
+The `set` will show both the shell and environment variables, while `printenv` will display only latter. The `set` also displays any defined shell functions. 
+
+It's also possible to view the contents of a variable using the `echo`:
+```
+echo $HOME
+```
+
+- PATH, a colon-separated list of directories that are searched when you enter the name of a executable program.
+- EDITOR, the name of the program to be used for text editing.
+- HOME, the pathname of your home directory.
+
+When we log on to the system, tha bash program starts and reads a series of configuration scripts called startup files, which define the default environment shared by all users. This is followed by more startup files in your home directory that define our personal environment. The exact sequence depends on the type of shell session being started. 
+- A login shell session. The one in which we are prompted for our username and password. 
+- A non-login shell session. Typically occurs when we launch a terminal session in GUI.
+
+Startup files for login shell sessions
+- `/etc/profile` A global configuration script that applies to all users
+- `~/.bash_profile` A user's personal startup file. It can be used to extend or override settings in the global configuration script.
+- `~/.bash_login` if ~/.bash_profile is not found, bash attempts to read this script.
+- `~/.profile` If neither ~/.bash_profile nor ~/.bash_login is found, bash attempts to read this file. This is the default in Debian-based distributions, such as Ubuntu.
+
+Startup files for non-login shell sessions
+- `/etc/bash.bashrc` A global configuration script that applies to all users.
+- `~/.bashrc` A user's personal startup file. It can be used to extend or override settings in the global configuration script.
+
+Non-login shells inherit the environment from their parent process, usually a login shell.
+
+The following command reads and executes the content
+```
+source ~/.bashrc
+```
+
+## Packages
+
+Different distributions use diffent packaging systems. Most distributions fall into one of two camps of packaging technologies: the Debian .deb and the Red Hat .rpm.
+
+The basic unit of software in a packaging system is the package file, a compressed collection of files that comprise the software package (programs, data files, metadata). Additionally, many packages contain pre- and post-istallation scripts that perform configuration tasks before and after the package installation. 
+
+Packages are made available to the users of a distribution in central repositories that may contain many thousands of packages, each specially built and maintained for the distribution.
+
+Low-level tools
+dpkg for Debian
+rpm for Red Hat
+
+High-level tools
+apt-get, apt, aptitude for Debian
+yum, dnf for Red Hat
+
+apt install package
+dpkg -i package
+apt remove package
+
+listing installed packages: `dpkg -l`
+whether a package is installed: `dpkg -s package_name`
+
